@@ -2,7 +2,7 @@ name: CI / Build & Release
 on:
   push:
     branches:
-      - main
+      - master
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
