@@ -59,8 +59,8 @@ tasks.build {
 publishing {
     publications{
         mavenJava(MavenPublication) {
-            groupID = 'org.example'
-            artifactID = 'todo-app'
+            groupId = 'org.example'
+            artifactId = 'todo-app'
             version = project.version
 
             artifact(tasks.shadowJar) {
