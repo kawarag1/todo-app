@@ -1,13 +1,16 @@
 name: CI / Build & Release
+
 on:
   push:
     branches:
       - master
+
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -27,19 +30,40 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*','**/gradlewrapper.properties') }}
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
 
       - name: Get project version
         id: get_version
         run: |
-          VERSION=$(grep '^version=' gradle.properties | cut -d'=' -f2)
+          # Проверяем существование файла
+          if [ -f gradle.properties ]; then
+            echo "gradle.properties exists"
+            cat gradle.properties
+          else
+            echo "gradle.properties not found"
+            ls -la
+          fi
+          
+          # Пробуем разные способы извлечения версии
+          VERSION=$(grep '^version' gradle.properties | cut -d'=' -f2 | tr -d ' \r\n')
+          echo "Extracted version: '$VERSION'"
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Debug version output
+        run: |
+          echo "Version from previous step: '${{ steps.get_version.outputs.VERSION }}'"
+
       - name: Build (run tests and create fat JAR)
         run: ./gradlew --no-daemon clean build
-        env:
-          JAVA_HOME: ${{ env.JAVA_HOME_23_X64 || '' }}
+
+      - name: List build artifacts
+        run: |
+          echo "Listing build directory:"
+          ls -la build/
+          echo "Listing libs directory:"
+          ls -la build/libs/ || echo "libs directory not found"
 
       - name: Create GitHub Release
         id: create_release
@@ -52,6 +76,7 @@ jobs:
           body: Automated release for version ${{ steps.get_version.outputs.VERSION }}
           draft: false
           prerelease: false
+
       - name: Upload artifact to Release
         uses: actions/upload-release-asset@v1
         env:
