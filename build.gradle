@@ -61,7 +61,7 @@ publishing {
         mavenJava(MavenPublication) {
             groupId = 'com.kawarag1'
             artifactId = 'todo-app'
-            version = '1.0.0'
+            version = '0.3.0'
 
             from components.java
 
