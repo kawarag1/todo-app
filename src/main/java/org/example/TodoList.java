@@ -23,6 +23,30 @@ public class TodoList {
         return false;
     }
 
+    public  boolean markDone(int index) {
+        if (index >= 0 && index < items.size()) {
+            String item = items.get(index);
+            items.set(index, "[DONE] " + item);
+            return true;
+        }
+        return false;
+    }
+
+    public  void clear() {
+        items.clear();
+    }
+
+    public  List<String> search(String query) {
+        List<String> result = new ArrayList<>();
+        for (String item : items) {
+            if (item.contains(query)) {
+                result.add(item);
+            }
+        }
+        return result;
+    }
+
+
     public List<String> getAll() {
         return new ArrayList<>(items);
     }
