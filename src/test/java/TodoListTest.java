@@ -55,7 +55,7 @@ public class TodoListTest {
 
         assertEquals(3, t.size());
 
-        t.clear(); // Очищаем все
+        t.clear();
 
         assertEquals(0, t.size());
         assertTrue(t.getAll().isEmpty());
